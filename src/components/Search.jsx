@@ -2,13 +2,13 @@ import React from "react";
 
 const Search = ({ search, handleSearch, searchInput }) => {
   return (
-    <div className="input-group input-group-sm">
+    <div className="input-group">
+      <span className="input-group-text">Search a character</span>
       <input
         type="text"
         className="form-control"
         value={search}
         onChange={handleSearch}
-        placeholder="Search a character"
         ref={searchInput}
       />
     </div>

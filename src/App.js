@@ -4,6 +4,7 @@ import { Header } from "./components/Header";
 import { Pagination } from "./components/Pagination";
 import { getData } from "./hooks/getData";
 import { Search } from "./components/Search";
+import { Footer } from "./components/Footer";
 
 const API = "https://rickandmortyapi.com/api/character/";
 
@@ -51,9 +52,11 @@ function App() {
           next={info.next}
           onPrevious={onPrevious}
           onNext={onNext}
+          search={search}
         />
         <Characters characters={filteredUsers} />
       </div>
+      <Footer />
     </div>
   );
 }
