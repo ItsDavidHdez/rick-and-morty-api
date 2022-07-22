@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Characters } from "./components/Characters";
 import { Header } from "./components/Header";
 import { Pagination } from "./components/Pagination";
 import { getData } from "./hooks/getData";
+import { Search } from "./components/Search";
 
 const API = "https://rickandmortyapi.com/api/character/";
 
 function App() {
   const [characters, setCharacters] = useState([]);
   const [info, setInfo] = useState({});
+  const [search, setSearch] = useState("");
+  const searchInput = useRef(null);
 
   useEffect(() => {
     getData(API, setCharacters, setInfo);
@@ -22,19 +25,35 @@ function App() {
     getData(info.next, setCharacters, setInfo);
   };
 
+  const handleSearch = () => {
+    setSearch(searchInput.current.value);
+  };
+
+  const filteredUsers = useMemo(
+    () =>
+      characters.filter((user) => {
+        return user.name.toLowerCase().includes(search.toLowerCase());
+      }),
+    [characters, search]
+  );
+
   return (
     <div className="App">
       <Header />
       <div className="container mt-5">
+        <Search
+          search={search}
+          handleSearch={handleSearch}
+          searchInput={searchInput}
+        />
         <Pagination
           prev={info.prev}
           next={info.next}
           onPrevious={onPrevious}
           onNext={onNext}
         />
-        <Characters characters={characters} />
+        <Characters characters={filteredUsers} />
       </div>
-      <h1>Hola</h1>
     </div>
   );
 }
