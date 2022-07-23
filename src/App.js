@@ -1,64 +1,78 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import { Characters } from "./components/Characters";
+import React, { Component } from "react";
+import { Routes, Route } from "react-router-dom";
 import { Header } from "./components/Header";
-import { Pagination } from "./components/Pagination";
-import { getData } from "./hooks/getData";
-import { Search } from "./components/Search";
 import { Footer } from "./components/Footer";
+import { Home } from "./pages/Home";
+import { Details } from "./pages/Details";
+import { Login } from "./pages/Login";
+import axios from "axios";
+import md5 from "md5";
+import Cookies from "universal-cookie";
 
-const API = "https://rickandmortyapi.com/api/character/";
+const API = "http://localhost:3000/users";
+const cookies = new Cookies();
 
-function App() {
-  const [characters, setCharacters] = useState([]);
-  const [info, setInfo] = useState({});
-  const [search, setSearch] = useState("");
-  const searchInput = useRef(null);
-
-  useEffect(() => {
-    getData(API, setCharacters, setInfo);
-  }, []);
-
-  const onPrevious = () => {
-    getData(info.prev, setCharacters, setInfo);
+class App extends Component {
+  state = {
+    form: {
+      username: "",
+      password: "",
+    },
   };
 
-  const onNext = () => {
-    getData(info.next, setCharacters, setInfo);
+  handleChange = async (e) => {
+    await this.setState({
+      form: {
+        ...this.state.form,
+        [e.target.name]: e.target.value,
+      },
+    });
   };
 
-  const handleSearch = () => {
-    setSearch(searchInput.current.value);
+  login = async () => {
+    await axios
+      .get(API, {
+        params: {
+          username: this.state.form.username,
+          password: md5(this.state.form.password),
+        },
+      })
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.length > 0) {
+          const response = res[0];
+          cookies.set("id", response.id, { path: "/" });
+          cookies.set("name", response.name, { path: "/" });
+          cookies.set("username", response.username, { path: "/" });
+          alert(`Bienvenido ${response.name}`);
+          window.location.href = "/";
+        } else {
+          alert("El usuario o contraseña no son correctos.");
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
-  const filteredUsers = useMemo(
-    () =>
-      characters.filter((user) => {
-        return user.name.toLowerCase().includes(search.toLowerCase());
-      }),
-    [characters, search]
-  );
-
-  return (
-    <div className="App">
-      <Header />
-      <div className="container mt-5">
-        <Search
-          search={search}
-          handleSearch={handleSearch}
-          searchInput={searchInput}
-        />
-        <Pagination
-          prev={info.prev}
-          next={info.next}
-          onPrevious={onPrevious}
-          onNext={onNext}
-          search={search}
-        />
-        <Characters characters={filteredUsers} />
+  render() {
+    return (
+      <div className="App">
+        <Header />
+        <div className="container mt-5">
+          <Routes>
+            <Route
+              path="/login"
+              element={
+                <Login handleChange={this.handleChange} login={this.login} />
+              }
+            />
+            <Route path="/" element={<Home />} />
+            <Route path="/:id" element={<Details />} />
+          </Routes>
+        </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
-  );
+    );
+  }
 }
 
 export default App;

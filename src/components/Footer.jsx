@@ -1,13 +1,15 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer class="bg-dark text-center text-white">
+    <footer className="bg-dark text-center text-white">
       <div
-        class="text-center p-3"
-        style={{ backgroundColor: "rgba(0, 0, 0, 0.2);" }}
+        className="text-center p-3"
+        style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
       >
-        Todos los izquierdos reservados.
+        Made with love by{" "}
+        <Link to="https://github.com/ItsDavidHdez">David</Link> ❤️
       </div>
     </footer>
   );

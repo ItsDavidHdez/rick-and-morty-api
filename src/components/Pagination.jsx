@@ -1,7 +1,6 @@
 import React from "react";
 
 const Pagination = ({ prev, next, onPrevious, onNext, search }) => {
-  console.log(search.length);
   return (
     <nav className="my-5">
       <ul className="pagination justify-content-center">
