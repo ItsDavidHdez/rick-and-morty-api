@@ -8,8 +8,7 @@ const cookies = new Cookies();
 function Details() {
   const [data, setData] = useState([]);
   const [like, setLike] = useState(false);
-  const [countLikes, setCountLikes] = useState(0);
-  //   const [likesContainer, setLikesContainer] = useLocalStorage("likes", []);
+  let containerLikes = useLocalStorage("like", []);
   let { id } = useParams();
 
   const API = `https://rickandmortyapi.com/api/character/${id}`;
@@ -23,19 +22,20 @@ function Details() {
 
   const handleLike = () => {
     if (cookies.get("id")) {
-      //   setLikesContainer(cookies.get("id"));
       if (like === true) {
         setLike(false);
-        setCountLikes(countLikes - 1);
+        containerLikes.pop(cookies.get("id"));
       } else {
         setLike(true);
-        setCountLikes(countLikes + 1);
+        containerLikes.push(cookies.get("id"));
       }
     } else {
       alert("Por favor, inicié sesión");
       window.location.href = "/login";
     }
   };
+
+  console.log(containerLikes);
 
   return (
     <div className="justify-content-center">
@@ -56,7 +56,7 @@ function Details() {
             className="btn btn-primary mb-4"
             onClick={handleLike}
           >
-            {like === true ? "No me gusta" : "Me gusta"} 0
+            {like === true ? "No me gusta" : "Me gusta"} {containerLikes.length}
           </button>
         </>
       )}
